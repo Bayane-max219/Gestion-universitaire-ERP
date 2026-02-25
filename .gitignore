@@ -1,0 +1,17 @@
+# Compilation (Maven)
+target/
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Tomcat / SmartTomcat (Fichiers locaux)
+.smarttomcat/
+temp/
+logs/
+
+# Divers
+.DS_Store
+Thumbs.db
