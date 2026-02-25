@@ -25,10 +25,6 @@ public class Inscription {
     @JoinColumn(name = "matiere_id", nullable = false)
     private Matiere matiere;
 
-    public enum StatutInscription {
-        EN_COURS, VALIDEE, ANNULEE
-    }
-
     // Constructeurs
     public Inscription() {}
 

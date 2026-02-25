@@ -2,17 +2,17 @@ package mg.universite.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import mg.universite.model.Etudiant;
+import mg.universite.model.Matiere;
 import java.util.List;
 
-public class EtudiantDAO {
+public class MatiereDAO {
 
-    public void save(Etudiant etudiant) {
+    public void save(Matiere matiere) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(etudiant); // Sauvegarde l'étudiant
+            em.persist(matiere);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -22,10 +22,10 @@ public class EtudiantDAO {
         }
     }
 
-    public List<Etudiant> findAll() {
+    public List<Matiere> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT e FROM Etudiant e", Etudiant.class).getResultList();
+            return em.createQuery("SELECT m FROM Matiere m", Matiere.class).getResultList();
         } finally {
             em.close();
         }
@@ -36,10 +36,8 @@ public class EtudiantDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Etudiant e = em.find(Etudiant.class, id); // On cherche l'étudiant
-            if (e != null) {
-                em.remove(e); // On le supprime
-            }
+            Matiere m = em.find(Matiere.class, id);
+            if (m != null) em.remove(m);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
