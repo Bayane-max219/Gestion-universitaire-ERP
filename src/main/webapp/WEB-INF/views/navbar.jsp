@@ -8,6 +8,12 @@
             <a class="nav-link btn btn-outline-success btn-sm ms-lg-3 text-white" href="inscriptions?action=new">
                 ➕ Nouvelle Inscription
             </a>
+            <a class="nav-link btn btn-outline-warning btn-sm ms-lg-3" href="admin/inscriptions">
+                Validation (Admin)
+            </a>
+            <a class="nav-link btn btn-danger btn-sm ms-lg-3 text-white" href="logout">
+                Déconnexion
+            </a>
         </div>
     </div>
 </nav>
