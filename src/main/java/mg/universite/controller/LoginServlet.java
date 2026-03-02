@@ -18,8 +18,12 @@ public class LoginServlet extends HttpServlet {
     private final AuthService authService = new AuthService();
 
     @Override
-    public void init() {
-        authService.bootstrapIfNeeded();
+    public void init() throws ServletException {
+        try {
+            authService.bootstrapIfNeeded();
+        } catch (Exception e) {
+            throw new ServletException("Erreur lors de l'initialisation de l'authentification", e);
+        }
     }
 
     @Override

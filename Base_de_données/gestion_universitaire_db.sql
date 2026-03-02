@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS `etudiants` (
   `email` varchar(255) NOT NULL,
   `nom` varchar(255) NOT NULL,
   `prenom` varchar(255) DEFAULT NULL,
+  `telephone` varchar(255) DEFAULT NULL,
+  `adresse` varchar(500) DEFAULT NULL,
+  `telephone_parent` varchar(255) DEFAULT NULL,
+  `numero_etudiant` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_28gbsstpf8tpc298hhmpffi99` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -41,9 +45,9 @@ CREATE TABLE IF NOT EXISTS `etudiants` (
 -- Dumping data for table `etudiants`
 --
 
-INSERT INTO `etudiants` (`id`, `email`, `nom`, `prenom`) VALUES
-(2, 'miguelsingcol@gmail.com', 'Bayane', 'Miguel'),
-(3, 'james@gmail.com', 'James', 'Maillard');
+INSERT INTO `etudiants` (`id`, `email`, `nom`, `prenom`, `telephone`, `adresse`, `telephone_parent`, `numero_etudiant`) VALUES
+(2, 'miguelsingcol@gmail.com', 'Bayane', 'Miguel', '033 XX XX XXX', 'Antananarivo', '032 XX XX XXX', 'ETU001'),
+(3, 'james@gmail.com', 'James', 'Maillard', '034 XX XX XXX', 'Antananarivo', '032 XX XX XXX', 'ETU002');
 
 -- --------------------------------------------------------
 
@@ -82,16 +86,102 @@ CREATE TABLE IF NOT EXISTS `matieres` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `coefficient` int NOT NULL,
   `nom` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
+  `professeur_id` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_professeur_responsable` (`professeur_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `matieres`
 --
 
-INSERT INTO `matieres` (`id`, `coefficient`, `nom`) VALUES
-(1, 4, 'Javascript'),
-(2, 4, 'PHP');
+INSERT INTO `matieres` (`id`, `coefficient`, `nom`, `professeur_id`) VALUES
+(1, 4, 'Javascript', 1),
+(2, 4, 'PHP', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `professeurs`
+--
+
+DROP TABLE IF EXISTS `professeurs`;
+CREATE TABLE IF NOT EXISTS `professeurs` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `nom` varchar(255) NOT NULL,
+  `prenom` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL UNIQUE,
+  `telephone` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `professeurs`
+--
+
+INSERT INTO `professeurs` (`id`, `nom`, `prenom`, `email`, `telephone`) VALUES
+(1, 'Rakoto', 'Jean', 'jean.rakoto@univ.mg', '033 XX XX XXX'),
+(2, 'Rabe', 'Marie', 'marie.rabe@univ.mg', '034 XX XX XXX');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `programmes`
+--
+
+DROP TABLE IF EXISTS `programmes`;
+CREATE TABLE IF NOT EXISTS `programmes` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `matiere_id` bigint NOT NULL,
+  `chapitre` varchar(1000) DEFAULT NULL,
+  `description` varchar(2000) DEFAULT NULL,
+  `ordre` int DEFAULT 1,
+  PRIMARY KEY (`id`),
+  KEY `FK_programme_matiere` (`matiere_id`),
+  CONSTRAINT `FK_programme_matiere` FOREIGN KEY (`matiere_id`) REFERENCES `matieres` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `emplois_du_temps`
+--
+
+DROP TABLE IF EXISTS `emplois_du_temps`;
+CREATE TABLE IF NOT EXISTS `emplois_du_temps` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `matiere_id` bigint NOT NULL,
+  `professeur_id` bigint NOT NULL,
+  `jour` varchar(20) NOT NULL,
+  `heure_debut` time NOT NULL,
+  `heure_fin` time NOT NULL,
+  `salle` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_edt_matiere` (`matiere_id`),
+  KEY `FK_edt_professeur` (`professeur_id`),
+  CONSTRAINT `FK_edt_matiere` FOREIGN KEY (`matiere_id`) REFERENCES `matieres` (`id`),
+  CONSTRAINT `FK_edt_professeur` FOREIGN KEY (`professeur_id`) REFERENCES `professeurs` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notes`
+--
+
+DROP TABLE IF EXISTS `notes`;
+CREATE TABLE IF NOT EXISTS `notes` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `inscription_id` bigint NOT NULL,
+  `matiere_id` bigint NOT NULL,
+  `valeur` decimal(4,2) DEFAULT NULL,
+  `type_evaluation` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_note_inscription` (`inscription_id`),
+  KEY `FK_note_matiere` (`matiere_id`),
+  CONSTRAINT `FK_note_inscription` FOREIGN KEY (`inscription_id`) REFERENCES `inscriptions` (`id`),
+  CONSTRAINT `FK_note_matiere` FOREIGN KEY (`matiere_id`) REFERENCES `matieres` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -149,6 +239,12 @@ INSERT INTO `users` (`id`, `passwordHash`, `username`, `role_id`) VALUES
 ALTER TABLE `inscriptions`
   ADD CONSTRAINT `FKp0doegdcvf1xjchrqlfuc0phy` FOREIGN KEY (`matiere_id`) REFERENCES `matieres` (`id`),
   ADD CONSTRAINT `FKrbdv2i5mc55pqxpuwt4fgxdbh` FOREIGN KEY (`etudiant_id`) REFERENCES `etudiants` (`id`);
+
+--
+-- Constraints for table `matieres`
+--
+ALTER TABLE `matieres`
+  ADD CONSTRAINT `FK_professeur_responsable` FOREIGN KEY (`professeur_id`) REFERENCES `professeurs` (`id`);
 
 --
 -- Constraints for table `users`

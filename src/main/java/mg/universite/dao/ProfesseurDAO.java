@@ -2,17 +2,18 @@ package mg.universite.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import mg.universite.model.Matiere;
+import mg.universite.model.Professeur;
+
 import java.util.List;
 
-public class MatiereDAO {
+public class ProfesseurDAO {
 
-    public void save(Matiere matiere) {
+    public void save(Professeur professeur) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(matiere);
+            em.persist(professeur);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -22,10 +23,19 @@ public class MatiereDAO {
         }
     }
 
-    public List<Matiere> findAll() {
+    public List<Professeur> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT m FROM Matiere m", Matiere.class).getResultList();
+            return em.createQuery("SELECT p FROM Professeur p", Professeur.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Professeur findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Professeur.class, id);
         } finally {
             em.close();
         }
@@ -36,21 +46,14 @@ public class MatiereDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Matiere m = em.find(Matiere.class, id);
-            if (m != null) em.remove(m);
+            Professeur p = em.find(Professeur.class, id);
+            if (p != null) {
+                em.remove(p);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
-    }
-
-    public Matiere findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Matiere.class, id);
         } finally {
             em.close();
         }

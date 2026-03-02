@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Gestion des Étudiants - ERP Universitaire</title>
+    <title>Gestion des Programmes - ERP Universitaire</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body { background-color: #f8f9fa; }
@@ -13,14 +13,13 @@
 </head>
 <body class="py-0">
 
-<%-- Inclusion de la barre de navigation --%>
 <%@ include file="navbar.jsp" %>
 
 <div class="container mt-4 container-box">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary">Liste des Étudiants</h2>
-        <a href="etudiants?action=new" class="btn btn-primary">
-            Ajouter un étudiant
+        <h2 class="text-primary">Liste des Programmes Pédagogiques</h2>
+        <a href="programmes?action=new" class="btn btn-primary">
+            Ajouter un programme
         </a>
     </div>
 
@@ -28,38 +27,36 @@
         <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Téléphone</th>
-            <th>Adresse</th>
+            <th>Matière</th>
+            <th>Chapitre</th>
+            <th>Description</th>
+            <th>Ordre</th>
             <th class="text-center">Actions</th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="e" items="${etudiants}">
+        <c:forEach var="p" items="${programmes}">
             <tr>
-                <td>${e.id}</td>
-                <td>${e.nom}</td>
-                <td>${e.prenom}</td>
-                <td>${e.email}</td>
-                <td>${e.telephone}</td>
-                <td>${e.adresse}</td>
+                <td>${p.id}</td>
+                <td>${p.matiere.nom}</td>
+                <td>${p.chapitre}</td>
+                <td>${p.description}</td>
+                <td>${p.ordre}</td>
                 <td class="text-center">
-                    <a href="etudiants?action=edit&id=${e.id}" class="btn btn-sm btn-warning">Modifier</a>
-
-                    <a href="etudiants?action=delete&id=${e.id}"
+                    <a href="programmes?action=edit&id=${p.id}" class="btn btn-sm btn-warning">Modifier</a>
+                    
+                    <a href="programmes?action=delete&id=${p.id}"
                        class="btn btn-sm btn-danger"
-                       onclick="return confirm('Voulez-vous vraiment supprimer cet étudiant ?')">
+                       onclick="return confirm('Voulez-vous vraiment supprimer ce programme ?')">
                         Supprimer
                     </a>
                 </td>
             </tr>
         </c:forEach>
 
-        <c:if test="${empty etudiants}">
+        <c:if test="${empty programmes}">
             <tr>
-                <td colspan="7" class="text-center text-muted">Aucun étudiant enregistré.</td>
+                <td colspan="6" class="text-center text-muted">Aucun programme pédagogique enregistré.</td>
             </tr>
         </c:if>
         </tbody>

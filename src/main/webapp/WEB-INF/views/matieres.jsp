@@ -30,6 +30,7 @@
             <th>ID</th>
             <th>Nom</th>
             <th>Coefficient</th>
+            <th>Professeur Responsable</th>
             <th class="text-center">Actions</th>
         </tr>
         </thead>
@@ -39,6 +40,14 @@
                 <td>${m.id}</td>
                 <td>${m.nom}</td>
                 <td>${m.coefficient}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${m.professeurResponsable != null}">
+                            ${m.professeurResponsable.nom} ${m.professeurResponsable.prenom}
+                        </c:when>
+                        <c:otherwise>-</c:otherwise>
+                    </c:choose>
+                </td>
                 <td class="text-center">
                     <a href="matieres?action=edit&id=${m.id}" class="btn btn-sm btn-warning">Modifier</a>
 
@@ -53,7 +62,7 @@
 
         <c:if test="${empty matieres}">
             <tr>
-                <td colspan="5" class="text-center text-muted">Aucune matière trouvé dans la base.</td>
+                <td colspan="6" class="text-center text-muted">Aucune matière trouvé dans la base.</td>
             </tr>
         </c:if>
         </tbody>

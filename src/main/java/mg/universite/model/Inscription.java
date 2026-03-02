@@ -2,6 +2,7 @@ package mg.universite.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "inscriptions")
@@ -25,6 +26,9 @@ public class Inscription {
     @JoinColumn(name = "matiere_id", nullable = false)
     private Matiere matiere;
 
+    @OneToMany(mappedBy = "inscription", cascade = CascadeType.ALL)
+    private List<Note> notes;
+
     // Constructeurs
     public Inscription() {}
 
@@ -45,4 +49,6 @@ public class Inscription {
     public void setEtudiant(Etudiant etudiant) { this.etudiant = etudiant; }
     public Matiere getMatiere() { return matiere; }
     public void setMatiere(Matiere matiere) { this.matiere = matiere; }
+    public List<Note> getNotes() { return notes; }
+    public void setNotes(List<Note> notes) { this.notes = notes; }
 }

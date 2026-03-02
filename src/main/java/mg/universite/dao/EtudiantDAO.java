@@ -48,4 +48,13 @@ public class EtudiantDAO {
             em.close();
         }
     }
+
+    public Etudiant findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Etudiant.class, id);
+        } finally {
+            em.close();
+        }
+    }
 }

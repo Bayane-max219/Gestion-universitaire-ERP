@@ -8,6 +8,8 @@ import mg.universite.model.Matiere;
 import mg.universite.model.StatutInscription;
 // L'import automatique devrait fonctionner maintenant
 
+import java.util.List;
+
 
 public class InscriptionDAO {
 
@@ -36,6 +38,24 @@ public class InscriptionDAO {
         } catch (Exception ex) {
             if (tx.isActive()) tx.rollback();
             ex.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Inscription> findAll() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery("SELECT i FROM Inscription i", Inscription.class).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public Inscription findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Inscription.class, id);
         } finally {
             em.close();
         }
