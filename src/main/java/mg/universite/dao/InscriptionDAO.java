@@ -13,7 +13,7 @@ import java.util.List;
 
 public class InscriptionDAO {
 
-    public void save(Long etudiantId, Long matiereId) {
+    public Inscription save(Long etudiantId, Long matiereId) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
@@ -32,12 +32,16 @@ public class InscriptionDAO {
                 ins.setStatut(StatutInscription.EN_COURS);
 
                 em.persist(ins);
+                tx.commit();
+                return ins;
             }
 
             tx.commit();
+            return null;
         } catch (Exception ex) {
             if (tx.isActive()) tx.rollback();
             ex.printStackTrace();
+            return null;
         } finally {
             em.close();
         }

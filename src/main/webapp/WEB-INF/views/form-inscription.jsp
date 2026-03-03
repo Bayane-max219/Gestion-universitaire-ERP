@@ -38,6 +38,24 @@
                             </select>
                         </div>
 
+                        <hr>
+
+                        <div class="mb-3">
+                            <label class="form-label">Montant tranche (Ar)</label>
+                            <input type="number" step="0.01" min="0" name="montantTranche" class="form-control" placeholder="Ex: 100000">
+                            <div class="form-text">Optionnel: si vide, aucune tranche ne sera créée.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date échéance</label>
+                            <input type="date" name="dateEcheance" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Référence paiement</label>
+                            <input type="text" name="referencePaiement" class="form-control" placeholder="Ex: Bordereau n°12345">
+                        </div>
+
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success">Valider l'inscription</button>
                             <a href="inscriptions" class="btn btn-outline-secondary">Annuler</a>

@@ -22,6 +22,12 @@
             <a class="nav-link btn btn-outline-warning btn-sm ms-lg-3" href="admin/inscriptions">
                 Validation (Admin)
             </a>
+            <a class="nav-link btn btn-outline-info btn-sm ms-lg-3" href="admin/paiements">
+                Paiements (Admin)
+            </a>
+            <a class="nav-link btn btn-outline-light btn-sm ms-lg-3" href="notifications">
+                Notifications
+            </a>
             <a class="nav-link btn btn-danger btn-sm ms-lg-3 text-white" href="logout">
                 Déconnexion
             </a>

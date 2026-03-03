@@ -57,4 +57,22 @@ public class EtudiantDAO {
             em.close();
         }
     }
+
+    public Long findIdByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            var res = em.createQuery(
+                            "select e.id from Etudiant e where lower(e.email) = lower(:email)",
+                            Long.class
+                    )
+                    .setParameter("email", email.trim())
+                    .getResultList();
+            return res.isEmpty() ? null : res.get(0);
+        } finally {
+            em.close();
+        }
+    }
 }
