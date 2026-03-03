@@ -11,8 +11,8 @@ import mg.universite.security.SessionKeys;
 import mg.universite.service.EtudiantService;
 import java.io.IOException;
 
-@WebServlet("/emplois-du-temps")
-public class EmploiDuTempsServlet extends HttpServlet {
+@WebServlet("/dashboard")
+public class DashboardServlet extends HttpServlet {
     
     private final EtudiantService etudiantService = new EtudiantService();
     
@@ -28,17 +28,22 @@ public class EmploiDuTempsServlet extends HttpServlet {
             return;
         }
         
-        // Pour les étudiants, récupérer leur emploi du temps selon leur filière et niveau
-        if (!isAdmin(user)) {
+        // Vérifier si c'est un admin ou un étudiant
+        if (isAdmin(user)) {
+            // Dashboard admin
+            request.getRequestDispatcher("/WEB-INF/views/admin-dashboard.jsp").forward(request, response);
+        } else {
+            // Dashboard étudiant
             String email = user.getUsername();
             var etudiant = etudiantService.findByEmail(email);
-            if (etudiant != null && etudiant.getFiliere() != null && etudiant.getNiveau() != null) {
-                // TODO: Récupérer l'emploi du temps de la filière
-                // request.setAttribute("emploiDuTemps", emploiDuTempsService.findByFiliereAndNiveau(etudiant.getFiliere(), etudiant.getNiveau()));
+            if (etudiant != null) {
+                request.setAttribute("etudiant", etudiant);
+                request.getRequestDispatcher("/WEB-INF/views/etudiant-dashboard.jsp").forward(request, response);
+            } else {
+                // Redirection vers login si étudiant non trouvé
+                response.sendRedirect(request.getContextPath() + "/login");
             }
         }
-        
-        request.getRequestDispatcher("/WEB-INF/views/emploi-du-temps.jsp").forward(request, response);
     }
     
     private boolean isAdmin(User user) {

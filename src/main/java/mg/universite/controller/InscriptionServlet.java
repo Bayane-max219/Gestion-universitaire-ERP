@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import mg.universite.dao.EtudiantDAO;
 import mg.universite.dao.InscriptionDAO;
 import mg.universite.dao.MatiereDAO;
-import mg.universite.service.PaiementService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -19,7 +18,7 @@ public class InscriptionServlet extends HttpServlet {
     private EtudiantDAO etudiantDAO = new EtudiantDAO();
     private MatiereDAO matiereDAO = new MatiereDAO();
     // Tu auras besoin d'un InscriptionDAO (à créer sur le même modèle que les autres)
-    private final PaiementService paiementService = new PaiementService();
+    // Service de paiement supprimé - géré par admin lors de création étudiant
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -55,7 +54,7 @@ public class InscriptionServlet extends HttpServlet {
                             ? null
                             : LocalDate.parse(dateEcheanceParam.trim());
                     String reference = (referenceParam == null) ? null : referenceParam.trim();
-                    paiementService.creerTranchePourInscription(ins.getId(), montant, dateEcheance, reference);
+                    // Création de tranche gérée par admin - simplification de l'architecture
                 }
             }
 

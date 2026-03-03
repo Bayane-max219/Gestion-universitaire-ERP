@@ -36,10 +36,10 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String username = request.getParameter("username");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        User user = authService.authenticate(username, password);
+        User user = authService.authenticate(email, password);
         if (user == null) {
             request.setAttribute("error", "Identifiants invalides");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
@@ -49,6 +49,11 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession(true);
         session.setAttribute(SessionKeys.AUTH_USER, user);
 
-        response.sendRedirect(request.getContextPath() + "/etudiants");
+        // Redirection selon le type d'utilisateur
+        if (authService.isAdmin(user)) {
+            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/dashboard");
+        }
     }
 }

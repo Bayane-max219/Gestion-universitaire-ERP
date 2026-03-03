@@ -5,79 +5,41 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import mg.universite.dao.MatiereDAO;
-import mg.universite.dao.ProgrammeDAO;
-import mg.universite.model.Programme;
-
+import mg.universite.service.EtudiantService;
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/programmes")
 public class ProgrammeServlet extends HttpServlet {
-
-    private ProgrammeDAO programmeDAO = new ProgrammeDAO();
-    private MatiereDAO matiereDAO = new MatiereDAO();
-
+    
+    private final EtudiantService etudiantService = new EtudiantService();
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String action = request.getParameter("action");
-        String idParam = request.getParameter("id");
         
-        if ("delete".equals(action) && idParam != null) {
-            Long id = Long.parseLong(idParam);
-            programmeDAO.delete(id);
-            response.sendRedirect("programmes");
-            return;
-        }
+        String filiereIdParam = request.getParameter("filiereId");
+        String niveauParam = request.getParameter("niveau");
         
-        if ("new".equals(action)) {
-            request.setAttribute("matieres", matiereDAO.findAll());
-            request.getRequestDispatcher("/WEB-INF/views/form-programme.jsp").forward(request, response);
-        } else if ("edit".equals(action) && idParam != null) {
-            Long id = Long.parseLong(idParam);
-            Programme programme = programmeDAO.findById(id);
-            request.setAttribute("programme", programme);
-            request.setAttribute("matieres", matiereDAO.findAll());
-            request.getRequestDispatcher("/WEB-INF/views/form-programme.jsp").forward(request, response);
+        if (filiereIdParam != null && !filiereIdParam.isEmpty()) {
+            // Récupérer la filière
+            // TODO: Récupérer la filière par ID
+            // Filiere filiere = filiereDAO.findById(Long.parseLong(filiereIdParam));
+            
+            if (niveauParam != null && !niveauParam.isEmpty()) {
+                // Programme par niveau et filière
+                // Niveau niveau = Niveau.fromString(niveauParam);
+                // List<Programme> programmes = etudiantService.getProgrammesByNiveauAndFiliere(niveau, filiere);
+                // request.setAttribute("programmes", programmes);
+            } else {
+                // Tous les programmes de la filière
+                // List<Programme> programmes = etudiantService.getProgrammesByFiliere(filiere);
+                // request.setAttribute("programmes", programmes);
+            }
         } else {
-            List<Programme> programmes = programmeDAO.findAll();
-            request.setAttribute("programmes", programmes);
-            request.getRequestDispatcher("/WEB-INF/views/programmes.jsp").forward(request, response);
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String idParam = request.getParameter("id");
-        String matiereIdParam = request.getParameter("matiereId");
-        String chapitre = request.getParameter("chapitre");
-        String description = request.getParameter("description");
-        String ordreParam = request.getParameter("ordre");
-
-        Programme programme;
-        
-        if (idParam != null && !idParam.isEmpty()) {
-            // Modification
-            programme = programmeDAO.findById(Long.parseLong(idParam));
-            programme.setMatiere(matiereDAO.findById(Long.parseLong(matiereIdParam)));
-            programme.setChapitre(chapitre);
-            programme.setDescription(description);
-            programme.setOrdre(Integer.parseInt(ordreParam));
-        } else {
-            // Création
-            programme = new Programme(
-                matiereDAO.findById(Long.parseLong(matiereIdParam)),
-                chapitre,
-                description,
-                Integer.parseInt(ordreParam)
-            );
+            // Toutes les filières
+            request.setAttribute("filieres", etudiantService.getAllFilieres());
         }
         
-        programmeDAO.save(programme);
-        response.sendRedirect("programmes");
+        request.getRequestDispatcher("/WEB-INF/views/programmes.jsp").forward(request, response);
     }
 }

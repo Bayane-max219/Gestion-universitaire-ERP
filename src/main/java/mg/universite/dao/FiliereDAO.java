@@ -2,17 +2,17 @@ package mg.universite.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import mg.universite.model.TranchePaiement;
+import mg.universite.model.Filiere;
 import java.util.List;
 
-public class TranchePaiementDAO {
+public class FiliereDAO {
     
-    public void save(TranchePaiement tranche) {
+    public void save(Filiere filiere) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(tranche);
+            em.persist(filiere);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -22,32 +22,37 @@ public class TranchePaiementDAO {
         }
     }
     
-    public List<TranchePaiement> findAll() {
+    public List<Filiere> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT t FROM TranchePaiement t ORDER BY t.dateEcheance", TranchePaiement.class).getResultList();
+            return em.createQuery("SELECT f FROM Filiere f ORDER BY f.nom", Filiere.class).getResultList();
         } finally {
             em.close();
         }
     }
     
-    public List<TranchePaiement> findByObligatoire(Boolean obligatoire) {
+    public Filiere findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Filiere.class, id);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Filiere findByCode(String code) {
+        if (code == null || code.isBlank()) {
+            return null;
+        }
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                            "SELECT t FROM TranchePaiement t WHERE t.obligatoire = :obligatoire ORDER BY t.dateEcheance", 
-                            TranchePaiement.class)
-                    .setParameter("obligatoire", obligatoire)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
-    
-    public TranchePaiement findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(TranchePaiement.class, id);
+                            "SELECT f FROM Filiere f WHERE f.code = :code", 
+                            Filiere.class)
+                    .setParameter("code", code)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
         } finally {
             em.close();
         }
@@ -58,9 +63,9 @@ public class TranchePaiementDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            TranchePaiement t = em.find(TranchePaiement.class, id);
-            if (t != null) {
-                em.remove(t);
+            Filiere f = em.find(Filiere.class, id);
+            if (f != null) {
+                em.remove(f);
             }
             tx.commit();
         } catch (Exception e) {

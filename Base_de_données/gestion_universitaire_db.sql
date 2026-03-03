@@ -229,6 +229,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`id`, `passwordHash`, `username`, `role_id`) VALUES
 (1, '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'admin', 1);
 
+-- --------------------------------------------------------
+
 --
 -- Constraints for dumped tables
 --
@@ -247,8 +249,43 @@ ALTER TABLE `matieres`
   ADD CONSTRAINT `FK_professeur_responsable` FOREIGN KEY (`professeur_id`) REFERENCES `professeurs` (`id`);
 
 --
+-- Table structure for table `tranches_paiement`
+--
+
+DROP TABLE IF EXISTS `tranches_paiement`;
+CREATE TABLE IF NOT EXISTS `tranches_paiement` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `inscription_id` bigint NOT NULL,
+  `montant` decimal(10,2) NOT NULL,
+  `date_echeance` date DEFAULT NULL,
+  `date_paiement` date DEFAULT NULL,
+  `statut` enum('A_PAYER','PAYEE','EN_RETARD','ANNULEE') NOT NULL,
+  `reference_paiement` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_tranche_inscription` (`inscription_id`),
+  CONSTRAINT `FK_tranche_inscription` FOREIGN KEY (`inscription_id`) REFERENCES `inscriptions` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `notifications`
+--
+
+DROP TABLE IF EXISTS `notifications`;
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `inscription_id` bigint NOT NULL,
+  `message` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `read_flag` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_notification_inscription` (`inscription_id`),
+  CONSTRAINT `FK_notification_inscription` FOREIGN KEY (`inscription_id`) REFERENCES `inscriptions` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Constraints for table `users`
 --
+
 ALTER TABLE `users`
   ADD CONSTRAINT `FKp56c1712k691lhsyewcssf40f` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
 COMMIT;
