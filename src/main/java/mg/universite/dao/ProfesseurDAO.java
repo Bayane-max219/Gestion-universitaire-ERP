@@ -13,7 +13,11 @@ public class ProfesseurDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(professeur);
+           if (professeur.getId() == null) {
+                em.persist(professeur);
+            } else {
+                em.merge(professeur);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();

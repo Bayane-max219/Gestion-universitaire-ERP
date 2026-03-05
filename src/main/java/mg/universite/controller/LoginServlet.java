@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 
         // Redirection selon le type d'utilisateur
         if (authService.isAdmin(user)) {
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+            response.sendRedirect(request.getContextPath() + "/dashboard");
         } else {
             response.sendRedirect(request.getContextPath() + "/dashboard");
         }

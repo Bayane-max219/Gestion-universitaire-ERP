@@ -100,6 +100,13 @@
                     </div>
                 </c:if>
 
+                <c:if test="${not empty warning}">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>${warning}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </c:if>
+
                 <div class="card shadow">
                     <div class="card-body">
                         <div class="table-responsive">

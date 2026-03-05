@@ -5,9 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration des Inscriptions - ERP Universitaire</title>
+    <title>Écolage - Administration</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
     <style>
         body {
             background-color: #f8f9fa; /* Fond blanc très clair comme demandé */
@@ -54,6 +55,9 @@
             padding: 1.5rem;
             margin-bottom: 2rem;
         }
+        .stats-box {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -64,8 +68,7 @@
             <div class="col-md-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="text-primary">
-                        <i class="bi bi-clipboard-check me-2"></i>Administration des Inscriptions
-                        <span class="badge bg-secondary ms-2">${inscriptions.size()}</span>
+                        <i class="bi bi-cash-stack me-2"></i>Gestion Écolage
                     </h2>
                     <div class="btn-group">
                         <a href="admin/inscriptions" class="btn btn-primary">
@@ -78,33 +81,60 @@
                 <div class="stats-container">
                     <div class="row text-center">
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
-                                <i class="bi bi-journal-bookmark fs-2 d-block"></i>
-                                <h4 class="mb-0">${inscriptions.size()}</h4>
-                                <small>Total Inscriptions</small>
+                            <div class="stats-box p-3 rounded">
+                                <i class="bi bi-currency-dollar fs-2 d-block"></i>
+                                <h4 class="mb-0">${totalDu}</h4>
+                                <small>Total dû</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="stats-box p-3 rounded">
                                 <i class="bi bi-check-circle fs-2 d-block"></i>
-                                <h4 class="mb-0">${validesCount}</h4>
-                                <small>Validées</small>
+                                <h4 class="mb-0">${totalPaye}</h4>
+                                <small>Total payé</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
-                                <i class="bi bi-clock fs-2 d-block"></i>
-                                <h4 class="mb-0">${encoursCount}</h4>
-                                <small>En cours</small>
+                            <div class="stats-box p-3 rounded">
+                                <i class="bi bi-wallet2 fs-2 d-block"></i>
+                                <h4 class="mb-0">${resteAPayer}</h4>
+                                <small>Reste à payer</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
-                                <i class="bi bi-x-circle fs-2 d-block"></i>
-                                <h4 class="mb-0">${annuleesCount}</h4>
-                                <small>Annulées</small>
+                            <div class="stats-box p-3 rounded">
+                                <i class="bi bi-exclamation-triangle fs-2 d-block"></i>
+                                <h4 class="mb-0">${retardCount}</h4>
+                                <small>En retard</small>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-check me-2"></i>Sélection étudiant
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form class="row g-3" method="get" action="${pageContext.request.contextPath}/admin/inscriptions">
+                            <div class="col-md-8">
+                                <select name="etudiantId" class="form-select" required>
+                                    <option value="">Sélectionner un étudiant</option>
+                                    <c:forEach var="e" items="${etudiants}">
+                                        <option value="${e.id}" <c:if test="${selectedEtudiant != null && selectedEtudiant.id == e.id}">selected</c:if>>
+                                            ${e.nom} ${e.prenom} (${e.numeroEtudiant})
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search me-1"></i>Afficher
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -115,90 +145,55 @@
                     </div>
                 </c:if>
 
+                <c:if test="${not empty success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>${success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </c:if>
+
                 <div class="card shadow">
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0">
-                            <i class="bi bi-list-ul me-2"></i>Inspections en Attente
+                            <i class="bi bi-calendar2-week me-2"></i>Créer échéancier
                         </h5>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Étudiant</th>
-                                        <th>Matière</th>
-                                        <th>Date d'inscription</th>
-                                        <th>Statut</th>
-                                        <th>Paiement</th>
-                                        <th class="text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="inscription" items="${inscriptions}">
-                                        <c:if test="${inscription.statut.toString() == statutEnCours}">
-                                            <tr>
-                                                <td>
-                                                    <strong>${inscription.etudiant.nom} ${inscription.etudiant.prenom}</strong><br>
-                                                    <small class="text-muted">${inscription.etudiant.email}</small>
-                                                </td>
-                                                <td>
-                                                    <strong>${inscription.matiere.nom}</strong><br>
-                                                    <small class="text-muted">Coeff: ${inscription.matiere.coefficient}</small>
-                                                </td>
-                                                <td>${inscription.dateInscription}</td>
-                                                <td>
-                                                    <span class="status-badge status-en-cours">
-                                                        <i class="bi bi-clock me-1"></i>EN COURS
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${inscription.etudiantEnRegle}">
-                                                            <span class="badge bg-success">
-                                                                <i class="bi bi-check-circle me-1"></i>Payé
-                                                            </span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="badge bg-danger">
-                                                                <i class="bi bi-x-circle me-1"></i>Impayé
-                                                            </span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                                <td class="text-center">
-                                                    <div class="btn-group" role="group">
-                                                        <a href="admin/inscriptions?action=valider&id=${inscription.id}" 
-                                                           class="btn btn-sm btn-success action-btn" 
-                                                           title="Valider" 
-                                                           onclick="return confirm('Êtes-vous sûr de vouloir valider cette inscription ?')">
-                                                            <i class="bi bi-check-circle"></i> Valider
-                                                        </a>
-                                                        <a href="admin/inscriptions?action=annuler&id=${inscription.id}" 
-                                                           class="btn btn-sm btn-danger action-btn" 
-                                                           title="Annuler" 
-                                                           onclick="return confirm('Êtes-vous sûr de vouloir annuler cette inscription ?')">
-                                                            <i class="bi bi-x-circle"></i> Annuler
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </c:if>
+                        <form class="row g-3" method="post" action="${pageContext.request.contextPath}/admin/inscriptions">
+                            <input type="hidden" name="action" value="createEcheancier" />
+                            <div class="col-md-6">
+                                <label class="form-label">Étudiant</label>
+                                <select name="etudiantId" class="form-select" required>
+                                    <option value="">Sélectionner un étudiant</option>
+                                    <c:forEach var="e" items="${etudiants}">
+                                        <option value="${e.id}" <c:if test="${selectedEtudiant != null && selectedEtudiant.id == e.id}">selected</c:if>>
+                                            ${e.nom} ${e.prenom} (${e.numeroEtudiant})
+                                        </option>
                                     </c:forEach>
-
-                                    <c:if test="${empty inscriptions or not inscriptions.stream().anyMatch(i -> i.statut.toString() == statutEnCours)}">
-                                        <tr>
-                                            <td colspan="6" class="text-center text-muted py-4">
-                                                <i class="bi bi-clipboard-check fs-1 d-block mb-2"></i>
-                                                Aucune inscription en attente de validation.
-                                                <br>
-                                                <small>Toutes les inscriptions sont traitées</small>
-                                            </td>
-                                        </tr>
-                                    </c:if>
-                                </tbody>
-                            </table>
-                        </div>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Frais annuel (Ar)</label>
+                                <input class="form-control" type="number" step="0.01" min="0" name="fraisAnnuel" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nombre de tranches</label>
+                                <input class="form-control" type="number" min="1" name="nombreTranches" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Mois départ</label>
+                                <input class="form-control" type="month" name="moisDepart" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Jour échéance</label>
+                                <input class="form-control" value="05" readonly />
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-success" type="submit">
+                                    <i class="bi bi-plus-circle me-1"></i>Créer échéancier
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -206,7 +201,7 @@
                 <div class="card shadow mt-4">
                     <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0">
-                            <i class="bi bi-journal me-2"></i>Toutes les Inscriptions
+                            <i class="bi bi-list-ul me-2"></i>Tranches de l'étudiant
                         </h5>
                     </div>
                     <div class="card-body">
@@ -214,62 +209,59 @@
                             <table class="table table-hover table-striped">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Étudiant</th>
-                                        <th>Matière</th>
-                                        <th>Date</th>
+                                        <th>Libellé</th>
+                                        <th>Montant</th>
+                                        <th>Échéance</th>
                                         <th>Statut</th>
-                                        <th>Paiement</th>
+                                        <th>Référence</th>
+                                        <th>Date paiement</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="inscription" items="${inscriptions}">
-                                        <c:if test="${inscription.statut.toString() != statutEnCours}">
-                                            <tr>
-                                                <td>
-                                                    <strong>${inscription.etudiant.nom} ${inscription.etudiant.prenom}</strong><br>
-                                                    <small class="text-muted">${inscription.etudiant.email}</small>
-                                                </td>
-                                                <td>
-                                                    <strong>${inscription.matiere.nom}</strong><br>
-                                                    <small class="text-muted">Coeff: ${inscription.matiere.coefficient}</small>
-                                                </td>
-                                                <td>${inscription.dateInscription}</td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${inscription.statut.toString() == 'VALIDEE'}">
-                                                            <span class="status-badge status-validee">
-                                                                <i class="bi bi-check-circle me-1"></i>VALIDÉE
-                                                            </span>
-                                                        </c:when>
-                                                        <c:when test="${inscription.statut.toString() == 'ANNULEE'}">
-                                                            <span class="status-badge status-annulee">
-                                                                <i class="bi bi-x-circle me-1"></i>ANNULÉE
-                                                            </span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="status-badge status-en-cours">
-                                                                <i class="bi bi-question-circle me-1"></i>${inscription.statut}
-                                                            </span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${inscription.etudiantEnRegle}">
-                                                            <span class="badge bg-success">
-                                                                <i class="bi bi-check-circle me-1"></i>Payé
-                                                            </span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="badge bg-danger">
-                                                                <i class="bi bi-x-circle me-1"></i>Impayé
-                                                            </span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                            </tr>
-                                        </c:if>
+                                    <c:forEach var="t" items="${tranchesEtudiant}">
+                                        <tr>
+                                            <td>${t.libelle}</td>
+                                            <td>${t.montant} Ar</td>
+                                            <td>${t.dateEcheance}</td>
+                                            <td>${t.statut}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${t.referencePaiement != null && t.referencePaiement != ''}">
+                                                        <span class="badge bg-secondary">${t.referencePaiement}</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="text-muted">N/A</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${t.datePaiement != null}">${t.datePaiement}</c:when>
+                                                    <c:otherwise><span class="text-muted">N/A</span></c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="text-center">
+                                                <c:if test="${t.statut.toString() != 'PAYEE'}">
+                                                    <button class="btn btn-sm btn-success action-btn" type="button"
+                                                            data-bs-toggle="modal" data-bs-target="#validerPaiementModal"
+                                                            data-tranche-id="${t.id}"
+                                                            data-etudiant-id="${selectedEtudiant != null ? selectedEtudiant.id : ''}">
+                                                        <i class="bi bi-check-circle"></i>
+                                                    </button>
+                                                </c:if>
+                                            </td>
+                                        </tr>
                                     </c:forEach>
+
+                                    <c:if test="${empty tranchesEtudiant}">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">
+                                                <i class="bi bi-cash-stack fs-1 d-block mb-2"></i>
+                                                Aucune tranche.
+                                            </td>
+                                        </tr>
+                                    </c:if>
                                 </tbody>
                             </table>
                         </div>
@@ -279,6 +271,56 @@
         </div>
     </div>
 
+    <div class="modal fade" id="validerPaiementModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="${pageContext.request.contextPath}/admin/inscriptions">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-check-circle me-2"></i>Valider paiement
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="action" value="validerPaiement" />
+                        <input type="hidden" name="id" id="validerPaiementTrancheId" />
+                        <input type="hidden" name="etudiantIdReturn" id="validerPaiementEtudiantId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Référence paiement</label>
+                            <input class="form-control" name="reference" maxlength="100" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date paiement</label>
+                            <input class="form-control" type="date" name="datePaiement" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Valider
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modalEl = document.getElementById('validerPaiementModal');
+            if (!modalEl) return;
+            modalEl.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var trancheId = button ? button.getAttribute('data-tranche-id') : '';
+                var etudiantId = button ? button.getAttribute('data-etudiant-id') : '';
+                var idInput = document.getElementById('validerPaiementTrancheId');
+                var etuInput = document.getElementById('validerPaiementEtudiantId');
+                if (idInput) idInput.value = trancheId || '';
+                if (etuInput) etuInput.value = etudiantId || '';
+            });
+        });
+    </script>
 </body>
 </html>

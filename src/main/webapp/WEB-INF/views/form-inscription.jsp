@@ -115,7 +115,7 @@
                             <i class="bi bi-plus-circle me-2"></i>Nouvelle Inscription
                         </h3>
                         <p class="mb-0 opacity-75">
-                            Inscrire un étudiant à une matière
+                            Créer l'échéancier d'écolage
                         </p>
                     </div>
                     
@@ -123,7 +123,15 @@
                         <c:if test="${param.error == '1'}">
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                Une erreur s'est produite lors de la création de l'inscription
+                                <c:choose>
+                                    <c:when test="${not empty sessionScope.flashError}">
+                                        ${sessionScope.flashError}
+                                        <c:remove var="flashError" scope="session" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        Une erreur s'est produite lors de la création de l'inscription
+                                    </c:otherwise>
+                                </c:choose>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         </c:if>
@@ -133,6 +141,7 @@
                                 <div class="col-md-6 mb-4 icon-input">
                                     <i class="bi bi-people"></i>
                                     <select name="etudiantId" class="form-control form-control-lg" required>
+
                                         <option value="">Sélectionner un étudiant</option>
                                         <c:forEach var="etudiant" items="${etudiants}">
                                             <option value="${etudiant.id}" 
@@ -143,48 +152,39 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-4 icon-input">
-                                    <i class="bi bi-book"></i>
-                                    <select name="matiereId" class="form-control form-control-lg" required>
-                                        <option value="">Sélectionner une matière</option>
-                                        <c:forEach var="matiere" items="${matieres}">
-                                            <option value="${matiere.id}" 
-                                                    <c:if test="${param.matiereId == matiere.id}">selected</c:if>>
-                                                ${matiere.nom} (Coeff: ${matiere.coefficient})
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <i class="bi bi-currency-dollar"></i>
+                                    <input type="number" step="0.01" min="0" name="fraisAnnuel" class="form-control form-control-lg" 
+                                           placeholder="Frais de scolarité annuel (Ar)" 
+                                           value="${param.fraisAnnuel}" required>
                                 </div>
                             </div>
 
                             <div class="section-divider">
-                                <h5 class="text-center">Options de Paiement (Facultatif)</h5>
+                                <h5 class="text-center">Tranches d'écolage</h5>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-4 mb-4 icon-input">
-                                    <i class="bi bi-currency-dollar"></i>
-                                    <input type="number" step="0.01" min="0" name="montantTranche" class="form-control form-control-lg" 
-                                           placeholder="Montant tranche (Ar)" 
-                                           value="${param.montantTranche}">
+                                    <i class="bi bi-list-ol"></i>
+                                    <input type="number" min="1" name="nombreTranches" class="form-control form-control-lg" 
+                                           placeholder="Nombre de tranches" 
+                                           value="${param.nombreTranches}" required>
                                 </div>
                                 <div class="col-md-4 mb-4 icon-input">
                                     <i class="bi bi-calendar"></i>
-                                    <input type="date" name="dateEcheance" class="form-control form-control-lg" 
-                                           value="${param.dateEcheance}">
+                                    <input type="month" name="moisDepart" class="form-control form-control-lg" 
+                                           value="${param.moisDepart}">
                                 </div>
                                 <div class="col-md-4 mb-4 icon-input">
-                                    <i class="bi bi-receipt"></i>
-                                    <input type="text" name="referencePaiement" class="form-control form-control-lg" 
-                                           placeholder="Référence paiement" 
-                                           value="${param.referencePaiement}">
+                                    <i class="bi bi-calendar-check"></i>
+                                    <input type="text" class="form-control form-control-lg" value="05" readonly>
                                 </div>
                             </div>
 
                             <div class="mb-4">
                                 <div class="alert alert-info">
                                     <i class="bi bi-info-circle me-2"></i>
-                                    <strong>Information:</strong> Les champs de paiement sont facultatifs. 
-                                    Vous pouvez créer l'inscription sans créer de tranche de paiement.
+                                    <strong>Information:</strong> Les échéances seront générées automatiquement au jour 05 de chaque mois.
                                 </div>
                             </div>
 

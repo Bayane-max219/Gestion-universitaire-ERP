@@ -172,10 +172,11 @@
                                     <label class="form-label">Filière</label>
                                     <select name="filiereId" class="form-select form-control-lg" required>
                                         <option value="">Sélectionner la filière</option>
-                                        <!-- Options à remplir dynamiquement -->
-                                        <option value="1">Informatique</option>
-                                        <option value="2">Économie</option>
-                                        <option value="3">Droit</option>
+                                        <c:forEach var="f" items="${filieres}">
+                                            <option value="${f.id}" ${etudiant != null && etudiant.filiere != null && etudiant.filiere.id == f.id ? 'selected' : ''}>
+                                                ${f.nom}
+                                            </option>
+                                        </c:forEach>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-4 icon-input">

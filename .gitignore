@@ -13,5 +13,6 @@ temp/
 logs/
 
 # Divers
+.windsurf/
 .DS_Store
 Thumbs.db

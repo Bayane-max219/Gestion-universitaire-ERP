@@ -22,6 +22,21 @@ public class FiliereDAO {
         }
     }
     
+    public void update(Filiere filiere) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.merge(filiere);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+    
     public List<Filiere> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {

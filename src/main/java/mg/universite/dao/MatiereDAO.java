@@ -12,7 +12,11 @@ public class MatiereDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(matiere);
+            if (matiere.getId() == null) {
+                em.persist(matiere);
+            } else {
+                em.merge(matiere);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();

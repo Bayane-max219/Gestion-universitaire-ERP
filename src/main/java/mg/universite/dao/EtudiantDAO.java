@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import mg.universite.model.Etudiant;
 import mg.universite.model.Niveau;
+
 import java.util.List;
 
 public class EtudiantDAO {
@@ -13,11 +14,26 @@ public class EtudiantDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(etudiant); // Sauvegarde l'étudiant
+            em.persist(etudiant);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void update(Etudiant etudiant) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            em.merge(etudiant);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
         } finally {
             em.close();
         }
@@ -37,14 +53,14 @@ public class EtudiantDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Etudiant e = em.find(Etudiant.class, id); // On cherche l'étudiant
+            Etudiant e = em.find(Etudiant.class, id);
             if (e != null) {
-                em.remove(e); // On le supprime
+                em.remove(e);
             }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
+            throw e;
         } finally {
             em.close();
         }
@@ -76,33 +92,31 @@ public class EtudiantDAO {
             em.close();
         }
     }
-    
+
     public Etudiant findByEmail(String email) {
         if (email == null || email.isBlank()) {
             return null;
         }
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery(
+            var res = em.createQuery(
                             "select e from Etudiant e where lower(e.email) = lower(:email)",
                             Etudiant.class
                     )
                     .setParameter("email", email.trim())
-                    .getSingleResult();
-        } catch (Exception e) {
-            return null;
+                    .getResultList();
+            return res.isEmpty() ? null : res.get(0);
         } finally {
             em.close();
         }
     }
-    
+
     public String generateNumeroEtudiant(Niveau niveau) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             String annee = String.valueOf(java.time.Year.now().getValue());
             String prefixeNumero = "SE" + annee;
-            
-            // Trouver le dernier numéro utilisé pour cette année
+
             var result = em.createQuery(
                             "select e.numeroEtudiant from Etudiant e where e.numeroEtudiant like :prefixe order by e.numeroEtudiant desc",
                             String.class
@@ -110,17 +124,17 @@ public class EtudiantDAO {
                     .setParameter("prefixe", prefixeNumero + "%")
                     .setMaxResults(1)
                     .getResultList();
-            
-            int nextNumber = 1;
+
+            int nextNumber = 0;
             if (!result.isEmpty()) {
                 String lastNumber = result.get(0);
                 try {
-                    nextNumber = Integer.parseInt(lastNumber.substring(6)) + 1; // 6 caractères pour "SE2026"
+                    nextNumber = Integer.parseInt(lastNumber.substring(6)) + 1;
                 } catch (Exception e) {
-                    nextNumber = 1;
+                    nextNumber = 0;
                 }
             }
-            
+
             return String.format("%s%04d", prefixeNumero, nextNumber);
         } finally {
             em.close();

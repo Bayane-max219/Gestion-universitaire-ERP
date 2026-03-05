@@ -120,9 +120,10 @@
                                             <td>${professeur.email}</td>
                                             <td>${professeur.telephone}</td>
                                             <td>
+                                                <c:set var="matiereCount" value="${matieresParProf[professeur.id]}" />
                                                 <c:choose>
-                                                    <c:when test="${not empty professeur.matieres}">
-                                                        <span class="badge bg-success">${professeur.matieres.size()}</span>
+                                                    <c:when test="${matiereCount != null && matiereCount > 0}">
+                                                        <span class="badge bg-success">${matiereCount}</span>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="badge bg-warning text-dark">0</span>

@@ -12,9 +12,13 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "inscription_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "inscription_id", nullable = true)
     private Inscription inscription;
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "etudiant_id", nullable = true)
+    private Etudiant etudiant;
 
     @Column(nullable = false, length = 255)
     private String message;
@@ -35,6 +39,13 @@ public class Notification {
         this.readFlag = false;
     }
 
+    public Notification(Etudiant etudiant, String message) {
+        this.etudiant = etudiant;
+        this.message = message;
+        this.createdAt = LocalDateTime.now();
+        this.readFlag = false;
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,6 +60,14 @@ public class Notification {
 
     public void setInscription(Inscription inscription) {
         this.inscription = inscription;
+    }
+
+    public Etudiant getEtudiant() {
+        return etudiant;
+    }
+
+    public void setEtudiant(Etudiant etudiant) {
+        this.etudiant = etudiant;
     }
 
     public String getMessage() {

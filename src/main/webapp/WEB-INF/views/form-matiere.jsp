@@ -151,7 +151,7 @@
                                     <option value="">Sélectionner un professeur responsable</option>
                                     <c:forEach var="professeur" items="${professeurs}">
                                         <option value="${professeur.id}" 
-                                                <c:if test="${matiere != null && matiere.professeur != null && matiere.professeur.id == professeur.id}">selected</c:if>>
+                                                <c:if test="${matiere != null && matiere.professeurResponsable != null && matiere.professeurResponsable.id == professeur.id}">selected</c:if>>
                                             ${professeur.nom} ${professeur.prenom} (${professeur.email})
                                         </option>
                                     </c:forEach>

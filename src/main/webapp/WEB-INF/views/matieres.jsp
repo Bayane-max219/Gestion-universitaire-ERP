@@ -50,9 +50,13 @@
                         <i class="bi bi-book me-2"></i>Matières
                         <span class="badge bg-secondary ms-2">${matieres.size()}</span>
                     </h2>
-                    <a href="matieres?action=new" class="btn btn-success">
-                        <i class="bi bi-plus-circle me-1"></i>Nouvelle Matière
-                    </a>
+                    <c:set var="authUser" value="${sessionScope.authUser}" />
+                    <c:set var="isAdmin" value="${authUser != null && authUser.role != null && authUser.role.id == 1}" />
+                    <c:if test="${isAdmin}">
+                        <a href="matieres?action=new" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-1"></i>Nouvelle Matière
+                        </a>
+                    </c:if>
                 </div>
 
                 <!-- Statistiques rapides -->
@@ -111,7 +115,9 @@
                                         <th>Nom</th>
                                         <th>Coefficient</th>
                                         <th>Professeur Responsable</th>
-                                        <th class="text-center">Actions</th>
+                                        <c:if test="${isAdmin}">
+                                            <th class="text-center">Actions</th>
+                                        </c:if>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,10 +129,10 @@
                                             </td>
                                             <td>
                                                 <c:choose>
-                                                    <c:when test="${matiere.professeur != null}">
+                                                    <c:when test="${matiere.professeurResponsable != null}">
                                                         <span class="badge bg-success">
                                                             <i class="bi bi-person-circle me-1"></i>
-                                                            ${matiere.professeur.nom} ${matiere.professeur.prenom}
+                                                            ${matiere.professeurResponsable.nom} ${matiere.professeurResponsable.prenom}
                                                         </span>
                                                     </c:when>
                                                     <c:otherwise>
@@ -137,37 +143,39 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <td class="text-center">
-                                                <div class="btn-group" role="group">
-                                                    <a href="matieres?action=edit&id=${matiere.id}" 
-                                                       class="btn btn-sm btn-outline-primary action-btn" 
-                                                       title="Modifier">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <a href="matieres?action=delete&id=${matiere.id}" 
-                                                       class="btn btn-sm btn-outline-danger action-btn" 
-                                                       title="Supprimer"
-                                                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette matière ?')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </a>
-                                                    <a href="programmes?action=new&matiereId=${matiere.id}" 
-                                                       class="btn btn-sm btn-outline-info action-btn" 
-                                                       title="Programme">
-                                                        <i class="bi bi-list-task"></i>
-                                                    </a>
-                                                    <a href="emplois-du-temps?action=new&matiereId=${matiere.id}" 
-                                                       class="btn btn-sm btn-outline-warning action-btn" 
-                                                       title="Emploi du temps">
-                                                        <i class="bi bi-calendar"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
+                                            <c:if test="${isAdmin}">
+                                                <td class="text-center">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="matieres?action=edit&id=${matiere.id}" 
+                                                           class="btn btn-sm btn-outline-primary action-btn" 
+                                                           title="Modifier">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <a href="matieres?action=delete&id=${matiere.id}" 
+                                                           class="btn btn-sm btn-outline-danger action-btn" 
+                                                           title="Supprimer"
+                                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette matière ?')">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                        <a href="programmes?action=new&matiereId=${matiere.id}" 
+                                                           class="btn btn-sm btn-outline-info action-btn" 
+                                                           title="Programme">
+                                                            <i class="bi bi-list-task"></i>
+                                                        </a>
+                                                        <a href="emplois-du-temps?action=new&matiereId=${matiere.id}" 
+                                                           class="btn btn-sm btn-outline-warning action-btn" 
+                                                           title="Emploi du temps">
+                                                            <i class="bi bi-calendar"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </c:if>
                                         </tr>
                                     </c:forEach>
 
                                     <c:if test="${empty matieres}">
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted py-4">
+                                            <td colspan="${isAdmin ? 4 : 3}" class="text-center text-muted py-4">
                                                 <i class="bi bi-book fs-1 d-block mb-2"></i>
                                                 Aucune matière trouvée
                                                 <br>
