@@ -3,8 +3,10 @@ package mg.universite.dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import mg.universite.model.EmploiDuTemps;
+import mg.universite.model.Filiere;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 public class EmploiDuTempsDAO {
@@ -14,7 +16,11 @@ public class EmploiDuTempsDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(emploiDuTemps);
+            if (emploiDuTemps.getId() == null) {
+                em.persist(emploiDuTemps);
+            } else {
+                em.merge(emploiDuTemps);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -27,7 +33,46 @@ public class EmploiDuTempsDAO {
     public List<EmploiDuTemps> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT e FROM EmploiDuTemps e", EmploiDuTemps.class).getResultList();
+            return em.createQuery(
+                    "SELECT e FROM EmploiDuTemps e ORDER BY e.mois DESC, e.jour ASC, e.heureDebut ASC",
+                    EmploiDuTemps.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<EmploiDuTemps> findByFiliereAndMois(Filiere filiere, LocalDate mois) {
+        if (filiere == null || filiere.getId() == null || mois == null) {
+            return List.of();
+        }
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT e FROM EmploiDuTemps e WHERE e.filiere = :filiere AND e.mois = :mois ORDER BY e.jour ASC, e.heureDebut ASC",
+                            EmploiDuTemps.class
+                    )
+                    .setParameter("filiere", filiere)
+                    .setParameter("mois", mois)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<EmploiDuTemps> findByFiliereIdAndMois(Long filiereId, LocalDate mois) {
+        if (filiereId == null || mois == null) {
+            return List.of();
+        }
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "SELECT e FROM EmploiDuTemps e WHERE e.filiere.id = :filiereId AND e.mois = :mois ORDER BY e.jour ASC, e.heureDebut ASC",
+                            EmploiDuTemps.class
+                    )
+                    .setParameter("filiereId", filiereId)
+                    .setParameter("mois", mois)
+                    .getResultList();
         } finally {
             em.close();
         }

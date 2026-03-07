@@ -3,6 +3,7 @@ package mg.universite.dao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import mg.universite.model.Note;
+import mg.universite.model.Semestre;
 
 import java.util.List;
 
@@ -13,7 +14,11 @@ public class NoteDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.persist(note);
+            if (note.getId() == null) {
+                em.persist(note);
+            } else {
+                em.merge(note);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -26,7 +31,53 @@ public class NoteDAO {
     public List<Note> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.createQuery("SELECT n FROM Note n", Note.class).getResultList();
+            return em.createQuery(
+                    "select distinct n from Note n " +
+                            "join fetch n.inscription i " +
+                            "join fetch i.etudiant " +
+                            "join fetch n.matiere " +
+                            "order by i.etudiant.nom, i.etudiant.prenom, n.matiere.nom",
+                    Note.class
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Note> findByEtudiantIdAndSemestre(Long etudiantId, Semestre semestre) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "select distinct n from Note n " +
+                                    "join fetch n.inscription i " +
+                                    "join fetch i.etudiant " +
+                                    "join fetch n.matiere " +
+                                    "where i.etudiant.id = :etudiantId and n.semestre = :semestre " +
+                                    "order by n.matiere.nom",
+                            Note.class
+                    )
+                    .setParameter("etudiantId", etudiantId)
+                    .setParameter("semestre", semestre)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Note> findBySemestre(Semestre semestre) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                            "select distinct n from Note n " +
+                                    "join fetch n.inscription i " +
+                                    "join fetch i.etudiant " +
+                                    "join fetch n.matiere " +
+                                    "where n.semestre = :semestre " +
+                                    "order by i.etudiant.nom, i.etudiant.prenom, n.matiere.nom",
+                            Note.class
+                    )
+                    .setParameter("semestre", semestre)
+                    .getResultList();
         } finally {
             em.close();
         }
@@ -48,9 +99,16 @@ public class NoteDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.createQuery(
-                "SELECT n FROM Note n WHERE n.inscription.etudiant.id = :etudiantId", 
-                Note.class
-            ).setParameter("etudiantId", etudiantId).getResultList();
+                            "select distinct n from Note n " +
+                                    "join fetch n.inscription i " +
+                                    "join fetch i.etudiant " +
+                                    "join fetch n.matiere " +
+                                    "where i.etudiant.id = :etudiantId " +
+                                    "order by n.matiere.nom",
+                            Note.class
+                    )
+                    .setParameter("etudiantId", etudiantId)
+                    .getResultList();
         } finally {
             em.close();
         }

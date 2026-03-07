@@ -41,6 +41,13 @@
             padding: 0.8rem;
             margin: 0.2rem 0;
         }
+        .stats-container {
+            background: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -56,143 +63,85 @@
             </a>
         </div>
 
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form class="row g-3" method="get" action="${pageContext.request.contextPath}/emplois-du-temps">
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="bi bi-calendar-month me-1"></i>Mois</label>
+                        <input type="month" class="form-control" name="mois" value="${selectedMoisStr}">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-funnel me-1"></i>Filtrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
+                        <i class="bi bi-calendar-event fs-2 d-block"></i>
+                        <h4 class="mb-0">${emploisDuTemps.size()}</h4>
+                        <small>Total Plages</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3 mb-md-0">
+                    <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
+                        <i class="bi bi-book-fill fs-2 d-block"></i>
+                        <h4 class="mb-0">${uniqueSubjectsCount != null ? uniqueSubjectsCount : 0}</h4>
+                        <small>Matières</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
+                        <i class="bi bi-person-fill fs-2 d-block"></i>
+                        <h4 class="mb-0">${uniqueTeachersCount != null ? uniqueTeachersCount : 0}</h4>
+                        <small>Professeurs</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
+                        <i class="bi bi-people-fill fs-2 d-block"></i>
+                        <h4 class="mb-0">${uniqueDaysCount != null ? uniqueDaysCount : 0}</h4>
+                        <small>Jours Actifs</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Lundi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 10:00</small>
-                                <div class="fw-bold">Mathématiques</div>
-                                <small>Salle A101</small>
-                            </div>
+            <c:forEach var="entry" items="${emploisDuTempsByDay}">
+                <div class="col-md-2 mb-3">
+                    <div class="schedule-card">
+                        <div class="day-header text-center">
+                            <h6 class="mb-0">${entry.key}</h6>
                         </div>
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>10:30 - 12:30</small>
-                                <div class="fw-bold">Physique</div>
-                                <small>Salle B205</small>
-                            </div>
+                        <div class="card-body p-2">
+                            <c:forEach var="emploi" items="${entry.value}">
+                                <div class="time-slot">
+                                    <div class="subject-card">
+                                        <small>${emploi.heureDebut} - ${emploi.heureFin}</small>
+                                        <div class="fw-bold">${emploi.matiere.nom}</div>
+                                        <small>${emploi.salle}</small>
+                                        <div><small>${emploi.professeur.nom} ${emploi.professeur.prenom}</small></div>
+                                    </div>
+                                </div>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
-            </div>
+            </c:forEach>
 
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Mardi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 10:00</small>
-                                <div class="fw-bold">Informatique</div>
-                                <small>Labo 301</small>
-                            </div>
-                        </div>
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>14:00 - 16:00</small>
-                                <div class="fw-bold">Anglais</div>
-                                <small>Salle C102</small>
-                            </div>
-                        </div>
+            <c:if test="${empty emploisDuTempsByDay}">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Aucun emploi du temps disponible pour ce mois.
                     </div>
                 </div>
-            </div>
-
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Mercredi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 10:00</small>
-                                <div class="fw-bold">Chimie</div>
-                                <small>Labo 203</small>
-                            </div>
-                        </div>
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>10:30 - 12:30</small>
-                                <div class="fw-bold">Biologie</div>
-                                <small>Labo 105</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Jeudi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 10:00</small>
-                                <div class="fw-bold">Français</div>
-                                <small>Salle A102</small>
-                            </div>
-                        </div>
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>14:00 - 16:00</small>
-                                <div class="fw-bold">Histoire</div>
-                                <small>Salle B103</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Vendredi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 10:00</small>
-                                <div class="fw-bold">Économie</div>
-                                <small>Salle C201</small>
-                            </div>
-                        </div>
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>10:30 - 12:30</small>
-                                <div class="fw-bold">Géographie</div>
-                                <small>Salle A205</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-2 mb-3">
-                <div class="schedule-card">
-                    <div class="day-header text-center">
-                        <h6 class="mb-0">Samedi</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="time-slot">
-                            <div class="subject-card">
-                                <small>08:00 - 12:00</small>
-                                <div class="fw-bold">TP Informatique</div>
-                                <small>Labo 302</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </c:if>
         </div>
 
         <div class="card mt-4">

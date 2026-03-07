@@ -55,7 +55,7 @@
 
                 <!-- Statistiques rapides -->
                 <div class="row mb-4">
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="card stats-card text-white">
                             <div class="card-body text-center">
                                 <i class="bi bi-people-fill fs-1"></i>
@@ -64,30 +64,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                         <div class="card bg-info text-white">
                             <div class="card-body text-center">
                                 <i class="bi bi-pencil-fill fs-1"></i>
                                 <h4 class="card-title">${inscritsCount}</h4>
                                 <p class="card-text">Inscrits</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card bg-success text-white">
-                            <div class="card-body text-center">
-                                <i class="bi bi-check-circle-fill fs-1"></i>
-                                <h4 class="card-title">${validesCount}</h4>
-                                <p class="card-text">Validés</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card bg-warning text-white">
-                            <div class="card-body text-center">
-                                <i class="bi bi-clock-fill fs-1"></i>
-                                <h4 class="card-title">${encoursCount}</h4>
-                                <p class="card-text">En cours</p>
                             </div>
                         </div>
                     </div>

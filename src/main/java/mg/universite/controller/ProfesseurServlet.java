@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import mg.universite.dao.EmploiDuTempsDAO;
 import mg.universite.dao.MatiereDAO;
 import mg.universite.dao.ProfesseurDAO;
 import mg.universite.model.Matiere;
@@ -15,6 +16,7 @@ import mg.universite.security.SessionKeys;
 import mg.universite.service.AuthService;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +73,26 @@ public class ProfesseurServlet extends HttpServlet {
 
             request.setAttribute("matieresParProf", matieresParProf);
             request.setAttribute("totalMatieresAssignees", totalMatieresAssignees);
-            request.setAttribute("totalEmploisDuTemps", 0);
-            request.setAttribute("totalHeuresEns", 0);
+
+            EmploiDuTempsDAO emploiDuTempsDAO = new EmploiDuTempsDAO();
+            var emplois = emploiDuTempsDAO.findAll();
+            request.setAttribute("totalEmploisDuTemps", emplois.size());
+            long totalMinutes = 0L;
+            for (var e : emplois) {
+                if (e.getHeureDebut() == null || e.getHeureFin() == null) {
+                    continue;
+                }
+                try {
+                    long minutes = Duration.between(e.getHeureDebut(), e.getHeureFin()).toMinutes();
+                    if (minutes > 0) {
+                        totalMinutes += minutes;
+                    }
+                } catch (Exception ignore) {
+                    // ignore invalid time ranges
+                }
+            }
+            double totalHours = totalMinutes / 60.0;
+            request.setAttribute("totalHeuresEns", String.format(java.util.Locale.US, "%.1f", totalHours));
             request.getRequestDispatcher("/WEB-INF/views/professeurs.jsp").forward(request, response);
         }
     }

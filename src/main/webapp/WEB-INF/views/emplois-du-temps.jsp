@@ -70,39 +70,66 @@
                         <i class="bi bi-calendar me-2"></i>Emplois du Temps
                         <span class="badge bg-secondary ms-2">${emploisDuTemps.size()}</span>
                     </h2>
-                    <a href="emplois-du-temps?action=new" class="btn btn-success">
+                    <a href="${pageContext.request.contextPath}/emplois-du-temps?action=new" class="btn btn-success">
                         <i class="bi bi-plus-circle me-1"></i>Nouvel Emploi du Temps
                     </a>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form class="row g-3" method="get" action="${pageContext.request.contextPath}/emplois-du-temps">
+                            <div class="col-md-6">
+                                <label class="form-label"><i class="bi bi-diagram-3 me-1"></i>Filière</label>
+                                <select name="filiereId" class="form-select">
+                                    <option value="">Toutes les filières</option>
+                                    <c:forEach var="filiere" items="${filieres}">
+                                        <option value="${filiere.id}" <c:if test="${selectedFiliereId != null && selectedFiliereId == filiere.id}">selected</c:if>>
+                                            ${filiere.nom}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="bi bi-calendar-month me-1"></i>Mois</label>
+                                <input type="month" class="form-control" name="mois" value="${selectedMoisStr}">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" type="submit">
+                                    <i class="bi bi-funnel me-1"></i>Filtrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Statistiques rapides -->
                 <div class="stats-container">
                     <div class="row text-center">
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-calendar-event fs-2 d-block"></i>
                                 <h4 class="mb-0">${emploisDuTemps.size()}</h4>
                                 <small>Total Plages</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-book-fill fs-2 d-block"></i>
-                                <h4 class="mb-0">${uniqueSubjectsCount}</h4>
+                                <h4 class="mb-0">${uniqueSubjectsCount != null ? uniqueSubjectsCount : 0}</h4>
                                 <small>Matières</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-person-fill fs-2 d-block"></i>
-                                <h4 class="mb-0">${uniqueTeachersCount}</h4>
+                                <h4 class="mb-0">${uniqueTeachersCount != null ? uniqueTeachersCount : 0}</h4>
                                 <small>Professeurs</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-people-fill fs-2 d-block"></i>
-                                <h4 class="mb-0">${uniqueDaysCount}</h4>
+                                <h4 class="mb-0">${uniqueDaysCount != null ? uniqueDaysCount : 0}</h4>
                                 <small>Jours Actifs</small>
                             </div>
                         </div>
@@ -156,12 +183,12 @@
                                             </div>
                                             <div class="col-md-1 text-end">
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="emplois-du-temps?action=edit&id=${emploi.id}" 
+                                                    <a href="${pageContext.request.contextPath}/emplois-du-temps?action=edit&id=${emploi.id}" 
                                                        class="btn btn-outline-primary action-btn" 
                                                        title="Modifier">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="emplois-du-temps?action=delete&id=${emploi.id}" 
+                                                    <a href="${pageContext.request.contextPath}/emplois-du-temps?action=delete&id=${emploi.id}" 
                                                        class="btn btn-outline-danger action-btn" 
                                                        title="Supprimer"
                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette plage horaire ?')">
@@ -180,7 +207,7 @@
                                 <i class="bi bi-calendar-x fs-1 text-muted d-block mb-3"></i>
                                 <h5 class="text-muted">Aucun emploi du temps disponible</h5>
                                 <p class="text-muted">Commencez par ajouter votre premier emploi du temps</p>
-                                <a href="emplois-du-temps?action=new" class="btn btn-primary">
+                                <a href="${pageContext.request.contextPath}/emplois-du-temps?action=new" class="btn btn-primary">
                                     <i class="bi bi-plus-circle me-1"></i>Créer un emploi du temps
                                 </a>
                             </div>
@@ -240,12 +267,12 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group" role="group">
-                                                    <a href="emplois-du-temps?action=edit&id=${emploi.id}" 
+                                                    <a href="${pageContext.request.contextPath}/emplois-du-temps?action=edit&id=${emploi.id}" 
                                                        class="btn btn-sm btn-outline-primary action-btn" 
                                                        title="Modifier">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="emplois-du-temps?action=delete&id=${emploi.id}" 
+                                                    <a href="${pageContext.request.contextPath}/emplois-du-temps?action=delete&id=${emploi.id}" 
                                                        class="btn btn-sm btn-outline-danger action-btn" 
                                                        title="Supprimer"
                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette plage horaire ?')">

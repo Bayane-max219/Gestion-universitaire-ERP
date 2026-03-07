@@ -180,7 +180,42 @@ public class TranchePaiementDAO {
             em.close();
         }
     }
-    
+
+    public boolean hasAnyNonPayeeForEtudiant(Long etudiantId) {
+        if (etudiantId == null) {
+            return false;
+        }
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                            "select count(t) from TranchePaiement t " +
+                                    "where t.etudiant.id = :etudiantId " +
+                                    "and t.obligatoire = true " +
+                                    "and t.statut <> :payee",
+                            Long.class)
+                    .setParameter("etudiantId", etudiantId)
+                    .setParameter("payee", StatutTranche.PAYEE)
+                    .getSingleResult();
+            return count != null && count > 0;
+        } finally {
+            em.close();
+        }
+    }
+
+    public long countDistinctEtudiantsWithObligatoireTranche() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                            "select count(distinct t.etudiant.id) from TranchePaiement t " +
+                                    "where t.obligatoire = true and t.etudiant.id is not null",
+                            Long.class)
+                    .getSingleResult();
+            return (count == null) ? 0L : count;
+        } finally {
+            em.close();
+        }
+    }
+
     public TranchePaiement findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -189,7 +224,7 @@ public class TranchePaiementDAO {
             em.close();
         }
     }
-    
+
     public void delete(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();

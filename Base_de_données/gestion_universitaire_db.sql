@@ -159,6 +159,7 @@ INSERT INTO `matieres` (`id`, `coefficient`, `nom`, `professeur_id`, `programme_
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE IF NOT EXISTS `notes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `semestre` enum('S1','S2') NOT NULL DEFAULT 'S1',
   `typeEvaluation` varchar(100) DEFAULT NULL,
   `valeur` double DEFAULT NULL,
   `inscription_id` bigint NOT NULL,

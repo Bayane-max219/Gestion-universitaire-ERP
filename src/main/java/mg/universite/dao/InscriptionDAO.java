@@ -10,7 +10,9 @@ import mg.universite.model.StatutInscription;
 
 import java.util.List;
 
-
+/**
+ * 
+ */
 public class InscriptionDAO {
 
     public Inscription save(Long etudiantId, Long matiereId) {
@@ -60,6 +62,29 @@ public class InscriptionDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Inscription.class, id);
+        } finally {
+            em.close();
+        }
+    }
+
+    public Inscription findByEtudiantIdAndMatiereId(Long etudiantId, Long matiereId) {
+        if (etudiantId == null || matiereId == null) {
+            return null;
+        }
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            var res = em.createQuery(
+                            "select i from Inscription i " +
+                                    "join fetch i.etudiant " +
+                                    "join fetch i.matiere " +
+                                    "where i.etudiant.id = :etudiantId and i.matiere.id = :matiereId",
+                            Inscription.class
+                    )
+                    .setParameter("etudiantId", etudiantId)
+                    .setParameter("matiereId", matiereId)
+                    .setMaxResults(1)
+                    .getResultList();
+            return res.isEmpty() ? null : res.get(0);
         } finally {
             em.close();
         }

@@ -129,6 +129,28 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-4 icon-input">
+                                    <i class="bi bi-diagram-3"></i>
+                                    <select name="filiereId" class="form-control form-control-lg" required>
+                                        <option value="">Sélectionner une filière</option>
+                                        <c:forEach var="filiere" items="${filieres}">
+                                            <option value="${filiere.id}"
+                                                    <c:if test="${emploiDuTemps != null && emploiDuTemps.filiere.id == filiere.id}">selected</c:if>>
+                                                ${filiere.nom}
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6 mb-4 icon-input">
+                                    <i class="bi bi-calendar-month"></i>
+                                    <input type="month" name="mois" class="form-control form-control-lg"
+                                           value="${not empty moisStr ? moisStr : (emploiDuTemps != null ? emploiDuTemps.mois : '')}"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4 icon-input">
                                     <i class="bi bi-book"></i>
                                     <select name="matiereId" class="form-control form-control-lg" required>
                                         <option value="">Sélectionner une matière</option>
@@ -142,15 +164,7 @@
                                 </div>
                                 <div class="col-md-6 mb-4 icon-input">
                                     <i class="bi bi-person-lines-fill"></i>
-                                    <select name="professeurId" class="form-control form-control-lg" required>
-                                        <option value="">Sélectionner un professeur</option>
-                                        <c:forEach var="professeur" items="${professeurs}">
-                                            <option value="${professeur.id}" 
-                                                    <c:if test="${emploiDuTemps != null && emploiDuTemps.professeur.id == professeur.id}">selected</c:if>>
-                                                ${professeur.nom} ${professeur.prenom} (${professeur.email})
-                                            </option>
-                                        </c:forEach>
-                                    </select>
+                                    <input type="text" class="form-control form-control-lg" value="Professeur automatique (lié à la matière)" disabled>
                                 </div>
                             </div>
 
@@ -159,13 +173,12 @@
                                     <i class="bi bi-calendar-day"></i>
                                     <select name="jour" class="form-control form-control-lg" required>
                                         <option value="">Sélectionner un jour</option>
-                                        <option value="Lundi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Lundi'}">selected</c:if>>Lundi</option>
-                                        <option value="Mardi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Mardi'}">selected</c:if>>Mardi</option>
-                                        <option value="Mercredi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Mercredi'}">selected</c:if>>Mercredi</option>
-                                        <option value="Jeudi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Jeudi'}">selected</c:if>>Jeudi</option>
-                                        <option value="Vendredi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Vendredi'}">selected</c:if>>Vendredi</option>
-                                        <option value="Samedi" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Samedi'}">selected</c:if>>Samedi</option>
-                                        <option value="Dimanche" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'Dimanche'}">selected</c:if>>Dimanche</option>
+                                        <option value="MONDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'MONDAY'}">selected</c:if>>Lundi</option>
+                                        <option value="TUESDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'TUESDAY'}">selected</c:if>>Mardi</option>
+                                        <option value="WEDNESDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'WEDNESDAY'}">selected</c:if>>Mercredi</option>
+                                        <option value="THURSDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'THURSDAY'}">selected</c:if>>Jeudi</option>
+                                        <option value="FRIDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'FRIDAY'}">selected</c:if>>Vendredi</option>
+                                        <option value="SATURDAY" <c:if test="${emploiDuTemps != null && emploiDuTemps.jour == 'SATURDAY'}">selected</c:if>>Samedi</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4 mb-4 icon-input">

@@ -45,17 +45,17 @@
                         </a>
                     </li>
                 </c:if>
-                
-                <!-- Menu déroulant Pédagogie -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-journal me-1"></i>Pédagogie
+
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/emplois-du-temps">
+                        <i class="bi bi-calendar-check me-1"></i>Emplois du temps
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/programmes"><i class="bi bi-list-task me-2"></i>Programmes</a></li>
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/emplois-du-temps"><i class="bi bi-calendar-check me-2"></i>Emploi du temps</a></li>
-                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/notes"><i class="bi bi-pen me-2"></i>Notes</a></li>
-                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/notes">
+                        <i class="bi bi-pen me-1"></i>Notes
+                    </a>
                 </li>
             </ul>
             

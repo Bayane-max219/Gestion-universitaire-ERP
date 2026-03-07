@@ -132,40 +132,53 @@
                             </div>
                         </c:if>
 
-                        <form action="notes" method="post">
+                        <form action="${pageContext.request.contextPath}/notes" method="post">
                             <c:if test="${note != null}">
                                 <input type="hidden" name="id" value="${note.id}">
                             </c:if>
 
                             <div class="mb-4">
                                 <label class="form-label">
-                                    <i class="bi bi-journal-bookmark me-1"></i>Sélectionnez l'inscription
+                                    <i class="bi bi-person me-1"></i>Étudiant
                                 </label>
-                                <div class="row">
-                                    <c:forEach var="inscription" items="${inscriptions}">
-                                        <div class="col-md-12 mb-2">
-                                            <div class="inscription-item 
-                                                <c:if test='${note != null && note.inscription.id == inscription.id}'>selected</c:if>"
-                                                 onclick="selectInscription(${inscription.id})">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div>
-                                                        <strong>${inscription.etudiant.nom} ${inscription.etudiant.prenom}</strong><br>
-                                                        <small class="text-muted">${inscription.matiere.nom} - ${inscription.dateInscription}</small>
-                                                    </div>
-                                                    <div>
-                                                        <input type="radio" name="inscriptionId" value="${inscription.id}" 
-                                                               id="inscription_${inscription.id}"
-                                                               <c:if test='${note != null && note.inscription.id == inscription.id}'>checked</c:if>
-                                                               required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </c:forEach>
+                                <div class="icon-input">
+                                    <i class="bi bi-person"></i>
+                                    <select name="etudiantId" class="form-control form-control-lg" required>
+                                        <option value="">-- Sélectionnez un étudiant --</option>
+                                        <c:forEach var="etudiant" items="${etudiants}">
+                                            <option value="${etudiant.id}" <c:if test='${note != null && note.inscription != null && note.inscription.etudiant != null && note.inscription.etudiant.id == etudiant.id}'>selected</c:if>>
+                                                ${etudiant.nom} ${etudiant.prenom} (${etudiant.numeroEtudiant})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-book me-1"></i>Matière
+                                </label>
+                                <div class="icon-input">
+                                    <i class="bi bi-book"></i>
+                                    <select name="matiereId" class="form-control form-control-lg" required>
+                                        <option value="">-- Sélectionnez une matière --</option>
+                                        <c:forEach var="matiere" items="${matieres}">
+                                            <option value="${matiere.id}" <c:if test='${note != null && note.matiere != null && note.matiere.id == matiere.id}'>selected</c:if>>
+                                                ${matiere.nom} (Coeff: ${matiere.coefficient})
+                                            </option>
+                                        </c:forEach>
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="row">
+                                <div class="col-md-6 mb-4 icon-input">
+                                    <i class="bi bi-calendar2-week"></i>
+                                    <select name="semestre" class="form-control form-control-lg" required>
+                                        <option value="S1" <c:if test='${note != null && note.semestre == "S1"}'>selected</c:if>>Semestre 1</option>
+                                        <option value="S2" <c:if test='${note != null && note.semestre == "S2"}'>selected</c:if>>Semestre 2</option>
+                                    </select>
+                                </div>
                                 <div class="col-md-6 mb-4 icon-input">
                                     <i class="bi bi-123"></i>
                                     <input type="number" step="0.01" min="0" max="20" name="valeur" class="form-control form-control-lg" 
@@ -184,7 +197,7 @@
                             <hr class="section-divider">
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="notes" class="btn btn-outline-secondary">
+                                <a href="${pageContext.request.contextPath}/notes" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-return-left me-1"></i>Annuler
                                 </a>
                                 <button type="submit" class="btn btn-submit text-white btn-lg px-4">
@@ -203,26 +216,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function selectInscription(id) {
-            const radios = document.querySelectorAll('input[name="inscriptionId"]');
-            radios.forEach(radio => {
-                radio.checked = false;
-                const item = radio.closest('.inscription-item');
-                if (item) {
-                    item.classList.remove('selected');
-                }
-            });
-            
-            const selectedRadio = document.getElementById('inscription_' + id);
-            if (selectedRadio) {
-                selectedRadio.checked = true;
-                const selectedItem = selectedRadio.closest('.inscription-item');
-                if (selectedItem) {
-                    selectedItem.classList.add('selected');
-                }
-            }
-        }
-    </script>
 </body>
 </html>

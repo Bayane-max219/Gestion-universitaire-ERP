@@ -107,7 +107,7 @@
                         </div>
                         <h5 class="card-title">Programmes Pédagogiques</h5>
                         <p class="card-text">Consultez les programmes de votre filière organisés par semestres</p>
-                        <a href="programmes?filiereId=${etudiant.filiere.id}&niveau=${etudiant.niveau}" 
+                        <a href="${pageContext.request.contextPath}/matieres" 
                            class="btn btn-primary">
                             <i class="bi bi-arrow-right me-2"></i>Consulter
                         </a>
@@ -138,7 +138,7 @@
                         </div>
                         <h5 class="card-title">Relevé de Notes</h5>
                         <p class="card-text">Accédez à votre relevé de notes et vos résultats</p>
-                        <a href="releve-notes" class="btn btn-info">
+                        <a href="${pageContext.request.contextPath}/notes" class="btn btn-info">
                             <i class="bi bi-arrow-right me-2"></i>Consulter
                         </a>
                     </div>
@@ -147,7 +147,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6 mb-4">
+            <div class="col-md-12 mb-4">
                 <div class="card dashboard-card">
                     <div class="card-body text-center">
                         <div class="feature-icon text-warning">
@@ -155,23 +155,8 @@
                         </div>
                         <h5 class="card-title">Notifications</h5>
                         <p class="card-text">Consultez vos notifications importantes et rappels de paiement</p>
-                        <a href="notifications" class="btn btn-warning">
+                        <a href="${pageContext.request.contextPath}/notifications" class="btn btn-warning">
                             <i class="bi bi-arrow-right me-2"></i>Voir les notifications
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="card dashboard-card">
-                    <div class="card-body text-center">
-                        <div class="feature-icon text-danger">
-                            <i class="bi bi-gear"></i>
-                        </div>
-                        <h5 class="card-title">Paramètres</h5>
-                        <p class="card-text">Gérez vos paramètres de compte et mot de passe</p>
-                        <a href="parametres" class="btn btn-danger">
-                            <i class="bi bi-arrow-right me-2"></i>Paramètres
                         </a>
                     </div>
                 </div>

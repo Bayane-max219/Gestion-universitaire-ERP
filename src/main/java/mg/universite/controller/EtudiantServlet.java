@@ -11,6 +11,7 @@ import mg.universite.model.Filiere;
 import mg.universite.model.Niveau;
 import mg.universite.model.User;
 import mg.universite.security.SessionKeys;
+import mg.universite.dao.TranchePaiementDAO;
 import mg.universite.service.AuthService;
 import mg.universite.service.EtudiantService;
 
@@ -82,9 +83,7 @@ public class EtudiantServlet extends HttpServlet {
                 }
             }
             request.setAttribute("etudiants", etudiantService.findAll());
-            request.setAttribute("inscritsCount", 0);
-            request.setAttribute("validesCount", 0);
-            request.setAttribute("encoursCount", 0);
+            request.setAttribute("inscritsCount", new TranchePaiementDAO().countDistinctEtudiantsWithObligatoireTranche());
             request.getRequestDispatcher("/WEB-INF/views/etudiants.jsp").forward(request, response);
         }
     }

@@ -64,39 +64,70 @@
                         <i class="bi bi-pen me-2"></i>Notes
                         <span class="badge bg-secondary ms-2">${notes.size()}</span>
                     </h2>
-                    <a href="notes?action=new" class="btn btn-success">
+                    <a href="${pageContext.request.contextPath}/notes?action=new" class="btn btn-success">
                         <i class="bi bi-plus-circle me-1"></i>Nouvelle Note
                     </a>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <form class="row g-3" method="get" action="${pageContext.request.contextPath}/notes">
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="bi bi-person me-1"></i>Étudiant</label>
+                                <select class="form-select" name="etudiantId">
+                                    <option value="" <c:if test="${selectedEtudiantId == null}">selected</c:if>>Tous</option>
+                                    <c:forEach var="etu" items="${etudiants}">
+                                        <option value="${etu.id}" <c:if test="${selectedEtudiantId != null && selectedEtudiantId == etu.id}">selected</c:if>>
+                                            ${etu.nom} ${etu.prenom}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label"><i class="bi bi-calendar2-week me-1"></i>Semestre</label>
+                                <select class="form-select" name="semestre">
+                                    <option value="" <c:if test="${selectedSemestre == null}">selected</c:if>>Tous</option>
+                                    <option value="S1" <c:if test="${selectedSemestre != null && selectedSemestre == 'S1'}">selected</c:if>>Semestre 1</option>
+                                    <option value="S2" <c:if test="${selectedSemestre != null && selectedSemestre == 'S2'}">selected</c:if>>Semestre 2</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" type="submit">
+                                    <i class="bi bi-funnel me-1"></i>Filtrer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Statistiques rapides -->
                 <div class="stats-container">
                     <div class="row text-center">
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-journal-album fs-2 d-block"></i>
                                 <h4 class="mb-0">${notes.size()}</h4>
                                 <small>Total Notes</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6 mb-3 mb-md-0">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-people-fill fs-2 d-block"></i>
-                                <h4 class="mb-0">${uniqueStudentsCount}</h4>
+                                <h4 class="mb-0">${uniqueStudentsCount != null ? uniqueStudentsCount : 0}</h4>
                                 <small>Étudiants Notés</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-book-fill fs-2 d-block"></i>
-                                <h4 class="mb-0">${uniqueSubjectsCount}</h4>
+                                <h4 class="mb-0">${uniqueSubjectsCount != null ? uniqueSubjectsCount : 0}</h4>
                                 <small>Matières</small>
                             </div>
                         </div>
                         <div class="col-md-3 col-6">
-                            <div class="bg-white bg-opacity-20 p-3 rounded">
+                            <div class="bg-white bg-opacity-75 text-dark p-3 rounded">
                                 <i class="bi bi-graph-up fs-2 d-block"></i>
-                                <h4 class="mb-0">${averageGrade}</h4>
+                                <h4 class="mb-0">${averageGrade != null ? averageGrade : 'N/A'}</h4>
                                 <small>Moyenne Générale</small>
                             </div>
                         </div>
@@ -118,6 +149,7 @@
                                     <tr>
                                         <th>Étudiant</th>
                                         <th>Matière</th>
+                                        <th>Semestre</th>
                                         <th>Valeur</th>
                                         <th>Type d'évaluation</th>
                                         <th class="text-center">Actions</th>
@@ -133,6 +165,9 @@
                                             <td>
                                                 <strong>${note.matiere.nom}</strong><br>
                                                 <small class="text-muted">Coeff: ${note.matiere.coefficient}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">${note.semestre}</span>
                                             </td>
                                             <td>
                                                 <c:choose>
@@ -159,18 +194,18 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-group" role="group">
-                                                    <a href="notes?action=edit&id=${note.id}" 
+                                                    <a href="${pageContext.request.contextPath}/notes?action=edit&id=${note.id}" 
                                                        class="btn btn-sm btn-outline-primary action-btn" 
                                                        title="Modifier">
                                                         <i class="bi bi-pencil"></i>
                                                     </a>
-                                                    <a href="notes?action=delete&id=${note.id}" 
+                                                    <a href="${pageContext.request.contextPath}/notes?action=delete&id=${note.id}" 
                                                        class="btn btn-sm btn-outline-danger action-btn" 
                                                        title="Supprimer"
                                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette note ?')">
                                                         <i class="bi bi-trash"></i>
                                                     </a>
-                                                    <a href="releve-notes?etudiantId=${note.inscription.etudiant.id}" 
+                                                    <a href="${pageContext.request.contextPath}/notes?action=releve&etudiantId=${note.inscription.etudiant.id}" 
                                                        class="btn btn-sm btn-outline-info action-btn" 
                                                        title="Relevé de notes">
                                                         <i class="bi bi-file-earmark-text"></i>
@@ -182,7 +217,7 @@
 
                                     <c:if test="${empty notes}">
                                         <tr>
-                                            <td colspan="5" class="text-center text-muted py-4">
+                                            <td colspan="6" class="text-center text-muted py-4">
                                                 <i class="bi bi-pen fs-1 d-block mb-2"></i>
                                                 Aucune note trouvée
                                                 <br>
